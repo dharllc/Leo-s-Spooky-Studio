@@ -192,38 +192,38 @@ const SpookyStudio: React.FC = () => {
         </div>
         
         {/* Placed Decorations */}
-        {decorations.map(decoration => (
-          <div
-            key={decoration.id}
-            className={`absolute text-4xl cursor-move ${
-              isNightMode ? 'drop-shadow-glow' : ''
-            }`}
-            style={{
-              left: `${decoration.x}px`,
-              top: `${decoration.y}px`,
-              transform: 'translate(-50%, -50%)',
-              touchAction: 'none'
-            }}
-            onTouchStart={(e) => handleDecorationTouchStart(e, decoration.id)}
-          >
-            {decoration.emoji}
-          </div>
-        ))}
-        
-        {/* Touch Position Indicator */}
-        {touchPosition && movingDecoration && (
-          <div
-            className="absolute text-4xl pointer-events-none"
-            style={{
-              left: `${touchPosition.x}px`,
-              top: `${touchPosition.y}px`,
-              transform: 'translate(-50%, -50%)',
-              opacity: 0.7
-            }}
-          >
-            {decorations.find(d => d.id === movingDecoration)?.emoji}
-          </div>
-        )}
+{decorations.map(decoration => (
+  <div
+    key={decoration.id}
+    className={`absolute text-4xl cursor-move ${
+      isNightMode ? 'drop-shadow-glow' : ''
+    }`}
+    style={{
+      left: `${decoration.x}px`,
+      top: `${decoration.y}px`,
+      transform: 'translate(-50%, -50%)',
+      touchAction: 'none'
+    }}
+    onTouchStart={(e) => handleDecorationTouchStart(e, decoration.id)}
+  >
+    {decoration.emoji}
+  </div>
+))}
+
+{/* Touch Position Indicator */}
+{touchPosition && movingDecoration && (
+  <div
+    className="absolute text-4xl pointer-events-none"
+    style={{
+      left: `${touchPosition.x}px`,
+      top: `${touchPosition.y}px`,
+      transform: 'translate(-50%, -50%)',
+      opacity: 0.7
+    }}
+  >
+    {decorations.find(d => d.id === movingDecoration)?.emoji}
+  </div>
+)}
       </div>
 
       <style jsx>{`

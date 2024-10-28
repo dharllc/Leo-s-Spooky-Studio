@@ -24,7 +24,7 @@ A delightful, interactive Halloween decoration web app designed for kids to expl
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/leo-s-spooky-studio.git
+git clone https://github.com/dharllc/leo-s-spooky-studio.git
 cd leo-s-spooky-studio/frontend
 ```
 

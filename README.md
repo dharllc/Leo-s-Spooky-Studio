@@ -2,6 +2,8 @@
 
 A delightful, interactive Halloween decoration web app designed for kids to explore their creativity on iPad. Drag and drop spooky emojis to decorate a haunted house, with day and night modes for extra fun!
 
+![Screenshot 2024-10-28 at 10 40 22 AM](https://github.com/user-attachments/assets/63ae6b73-c9a2-4b55-b962-e2fef109878a)
+
 ## 🚀 Features
 
 - Interactive drag-and-drop decoration placement

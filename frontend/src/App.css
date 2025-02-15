@@ -3,4 +3,71 @@
   height: 100vh;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+}
+
+/* Smooth transition for background changes */
+#root {
+  transition: background-color 1000ms ease-in-out;
+}
+
+/* Better touch handling */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Prevent elastic scrolling on iOS */
+html, body {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+/* Improve text rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Disable pull-to-refresh on mobile */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Improve animation performance */
+.animated-element {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Night mode transition */
+.night-mode {
+  background: linear-gradient(to bottom, #0f172a, #1e293b);
+}
+
+/* Smooth scaling for emojis */
+.emoji {
+  transform-origin: center;
+  transition: transform 150ms ease-in-out;
+}
+
+.emoji:active {
+  transform: scale(0.95);
+}
+
+/* Improved touch feedback */
+.touch-element {
+  touch-action: none;
+  cursor: pointer;
+}
+
+.touch-element:active {
+  transform: scale(0.98);
 }

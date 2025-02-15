@@ -79,7 +79,7 @@ const Sky: React.FC<SkyProps> = ({ isNightMode }) => {
         </div>
       ))}
 
-      <style jsx>{`
+      <style>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0; }
           50% { opacity: 1; }

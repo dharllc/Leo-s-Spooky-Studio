@@ -221,7 +221,7 @@ const SpookyStudio: React.FC = () => {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .drop-shadow-glow {
           filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
         }

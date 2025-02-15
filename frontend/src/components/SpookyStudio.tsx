@@ -6,15 +6,13 @@ import DecorationPanel from './DecorationPanel';
 
 const SpookyStudio: React.FC = () => {
   const [decorations, setDecorations] = useState<PlacedDecoration[]>([]);
-  const [draggedItem, setDraggedItem] = useState<DecorationItem | null>(null);
+  const [draggedItem] = useState<DecorationItem | null>(null);
   const [movingDecoration, setMovingDecoration] = useState<string | null>(null);
   const [touchPosition, setTouchPosition] = useState<{ x: number; y: number } | null>(null);
   const [isNightMode, setIsNightMode] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
   const touchOffsetRef = useRef({ x: 0, y: 0 });
-  const touchStartTimeRef = useRef(0);
-  const touchStartPosRef = useRef({ x: 0, y: 0 });
 
   // Prevent scrolling when dragging
   useEffect(() => {
@@ -59,11 +57,8 @@ const SpookyStudio: React.FC = () => {
     if ('touches' in e) {
       e.preventDefault();
       const touch = e.touches[0];
-      touchStartTimeRef.current = Date.now();
-      touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
-      
-      // Immediately create the decoration at touch point
       const pos = calculateCanvasPosition(touch.clientX, touch.clientY);
+      
       setDecorations(prev => [...prev, {
         ...item,
         id: `${item.id}-${Date.now()}`,
@@ -80,33 +75,36 @@ const SpookyStudio: React.FC = () => {
     isDraggingRef.current = true;
     const touch = e.touches[0];
     const targetRect = e.currentTarget.getBoundingClientRect();
-    const touchOffsetX = touch.clientX - targetRect.left - targetRect.width / 2;
-    const touchOffsetY = touch.clientY - targetRect.top - targetRect.height / 2;
+    touchOffsetRef.current = {
+      x: touch.clientX - targetRect.left - targetRect.width / 2,
+      y: touch.clientY - targetRect.top - targetRect.height / 2
+    };
     
-    touchOffsetRef.current = { x: touchOffsetX, y: touchOffsetY };
-    touchStartTimeRef.current = Date.now();
-    touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
+    const pos = {
+      x: touch.clientX - touchOffsetRef.current.x,
+      y: touch.clientY - touchOffsetRef.current.y
+    };
     
-    const pos = calculateCanvasPosition(touch.clientX - touchOffsetX, touch.clientY - touchOffsetY);
     setTouchPosition(pos);
     setMovingDecoration(decorationId);
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handleTouchMove = React.useCallback((e: TouchEvent) => {
     if (movingDecoration && canvasRef.current) {
       e.preventDefault();
       const touch = e.touches[0];
-      const pos = calculateCanvasPosition(
-        touch.clientX - touchOffsetRef.current.x,
-        touch.clientY - touchOffsetRef.current.y
-      );
+      const pos = {
+        x: touch.clientX - touchOffsetRef.current.x,
+        y: touch.clientY - touchOffsetRef.current.y
+      };
+      
       requestAnimationFrame(() => {
         setTouchPosition(pos);
       });
     }
-  };
+  }, [movingDecoration]);
 
-  const handleTouchEnd = (e: TouchEvent) => {
+  const handleTouchEnd = React.useCallback((e: TouchEvent) => {
     e.preventDefault();
     isDraggingRef.current = false;
 
@@ -121,19 +119,7 @@ const SpookyStudio: React.FC = () => {
       setTouchPosition(null);
       touchOffsetRef.current = { x: 0, y: 0 };
     }
-  };
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.addEventListener('touchmove', handleTouchMove, { passive: false });
-      canvasRef.current.addEventListener('touchend', handleTouchEnd);
-
-      return () => {
-        canvasRef.current?.removeEventListener('touchmove', handleTouchMove);
-        canvasRef.current?.removeEventListener('touchend', handleTouchEnd);
-      };
-    }
-  }, [draggedItem, movingDecoration, touchPosition]);
+  }, [touchPosition, movingDecoration]);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -155,6 +141,19 @@ const SpookyStudio: React.FC = () => {
       console.error('Failed to parse decoration data:', error);
     }
   };
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const currentRef = canvasRef.current;
+      currentRef.addEventListener('touchmove', handleTouchMove, { passive: false });
+      currentRef.addEventListener('touchend', handleTouchEnd);
+
+      return () => {
+        currentRef.removeEventListener('touchmove', handleTouchMove);
+        currentRef.removeEventListener('touchend', handleTouchEnd);
+      };
+    }
+  }, [handleTouchMove, handleTouchEnd]);
 
   const handleReset = () => {
     setDecorations([]);
@@ -184,46 +183,42 @@ const SpookyStudio: React.FC = () => {
         <Sky isNightMode={isNightMode} />
         <HauntedHouse isNightMode={isNightMode} />
 
-        {/* Simplified Decoration Counter */}
-        <div className={`absolute top-4 right-4 px-4 py-2 rounded-lg shadow-lg text-2xl font-bold ${
+        <div className={`absolute top-4 right-4 px-6 py-3 rounded-xl shadow-lg text-3xl font-bold ${
           isNightMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
         } transition-colors duration-1000`}>
           {decorations.length}
         </div>
         
-        {/* Placed Decorations */}
-{decorations.map(decoration => (
-  <div
-    key={decoration.id}
-    className={`absolute text-4xl cursor-move ${
-      isNightMode ? 'drop-shadow-glow' : ''
-    }`}
-    style={{
-      left: `${decoration.x}px`,
-      top: `${decoration.y}px`,
-      transform: 'translate(-50%, -50%)',
-      touchAction: 'none'
-    }}
-    onTouchStart={(e) => handleDecorationTouchStart(e, decoration.id)}
-  >
-    {decoration.emoji}
-  </div>
-))}
+        {decorations.map(decoration => (
+          <div
+            key={decoration.id}
+            className={`absolute text-5xl cursor-move transform transition-transform hover:scale-110 active:scale-95 ${
+              isNightMode ? 'drop-shadow-glow' : ''
+            }`}
+            style={{
+              left: `${decoration.x}px`,
+              top: `${decoration.y}px`,
+              transform: 'translate(-50%, -50%)',
+              touchAction: 'none'
+            }}
+            onTouchStart={(e) => handleDecorationTouchStart(e, decoration.id)}
+          >
+            {decoration.emoji}
+          </div>
+        ))}
 
-{/* Touch Position Indicator */}
-{touchPosition && movingDecoration && (
-  <div
-    className="absolute text-4xl pointer-events-none"
-    style={{
-      left: `${touchPosition.x}px`,
-      top: `${touchPosition.y}px`,
-      transform: 'translate(-50%, -50%)',
-      opacity: 0.7
-    }}
-  >
-    {decorations.find(d => d.id === movingDecoration)?.emoji}
-  </div>
-)}
+        {touchPosition && movingDecoration && (
+          <div
+            className="absolute text-5xl pointer-events-none opacity-70"
+            style={{
+              left: `${touchPosition.x}px`,
+              top: `${touchPosition.y}px`,
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            {decorations.find(d => d.id === movingDecoration)?.emoji}
+          </div>
+        )}
       </div>
 
       <style jsx>{`

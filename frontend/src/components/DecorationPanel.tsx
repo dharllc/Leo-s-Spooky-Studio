@@ -16,36 +16,36 @@ const DecorationPanel: React.FC<DecorationPanelProps> = ({
   onToggleNightMode
 }) => {
   return (
-    <div className="w-24 bg-white shadow-lg p-4 flex flex-col gap-4">
+    <div className="w-32 bg-white shadow-lg p-6 flex flex-col gap-6">
       {decorationItems.map(item => (
         <div
           key={item.id}
           draggable
           onDragStart={(e) => onDragStart(e, item)}
           onTouchStart={(e) => onDragStart(e, item)}
-          className="h-16 w-16 flex items-center justify-center text-4xl bg-gray-50 rounded-lg cursor-move hover:bg-gray-100 transition-colors"
+          className="h-20 w-20 flex items-center justify-center text-5xl bg-gray-50 rounded-xl cursor-move hover:bg-gray-100 transition-colors shadow-sm hover:shadow-md active:scale-95 transform transition-transform"
         >
           {item.emoji}
         </div>
       ))}
       
-      <div className="mt-8 flex flex-col gap-3">
+      <div className="mt-auto flex flex-col gap-4">
         <button
           onClick={onToggleNightMode}
-          className="p-2 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center"
+          className="p-4 bg-blue-100 rounded-xl hover:bg-blue-200 transition-colors flex items-center justify-center"
           title={isNightMode ? "Switch to day mode" : "Switch to night mode"}
         >
           {isNightMode ? 
-            <Sun className="h-6 w-6 text-yellow-600" /> : 
-            <Moon className="h-6 w-6 text-blue-600" />
+            <Sun className="h-8 w-8 text-yellow-600" /> : 
+            <Moon className="h-8 w-8 text-blue-600" />
           }
         </button>
 
         <button
           onClick={onReset}
-          className="p-2 bg-red-100 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center"
+          className="p-4 bg-red-100 rounded-xl hover:bg-red-200 transition-colors flex items-center justify-center"
         >
-          <XCircle className="h-6 w-6 text-red-600" />
+          <XCircle className="h-8 w-8 text-red-600" />
         </button>
       </div>
     </div>
